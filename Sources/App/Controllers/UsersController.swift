@@ -1,5 +1,5 @@
 //
-//  UserController.swift
+//  UsersController.swift
 //
 //
 //  Created by Tim Bryant on 6/21/24.
@@ -20,6 +20,9 @@ struct UsersController: RouteCollection {
         
         // get user based on id
         usersRoute.get(":userID", use: getHandler)
+        
+        // get acronyms for user
+        usersRoute.get(":userID", "acronyms", use: getAcronymsHandler)
     }
     
     @Sendable
@@ -41,5 +44,14 @@ struct UsersController: RouteCollection {
         }
         
         return user
+    }
+    
+    @Sendable
+    func getAcronymsHandler(_ req: Request) async throws -> [Acronym] {
+        guard let user = try await User.find(req.parameters.get("userID"), on: req.db) else {
+            throw Abort(.notFound)
+        }
+        
+        return try await user.$acronyms.get(on: req.db)
     }
 }
