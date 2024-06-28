@@ -8,15 +8,15 @@
 import Fluent
 import Foundation
 
-struct CreateCategory: Migration {
-    func prepare(on database: any FluentKit.Database) -> NIOCore.EventLoopFuture<Void> {
-        database.schema("categories")
+struct CreateCategory: AsyncMigration {
+    func prepare(on database: Database) async throws {
+        try await database.schema("categories")
             .id()
             .field("name", .string, .required)
             .create()
     }
     
-    func revert(on database: any FluentKit.Database) -> NIOCore.EventLoopFuture<Void> {
-        database.schema("categories").delete()
+    func revert(on database: Database) async throws {
+        try await database.schema("categories").delete()
     }
 }

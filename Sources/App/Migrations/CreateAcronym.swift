@@ -8,9 +8,9 @@
 import Fluent
 import Foundation
 
-struct CreateAcronym: Migration {
-    func prepare(on database: any FluentKit.Database) -> NIOCore.EventLoopFuture<Void> {
-        database.schema("acronyms")
+struct CreateAcronym: AsyncMigration {
+    func prepare(on database: Database) async throws {
+        try await database.schema("acronyms")
             .id()
             .field("short", .string, .required)
             .field("long", .string, .required)
@@ -18,7 +18,7 @@ struct CreateAcronym: Migration {
             .create()
     }
     
-    func revert(on database: any FluentKit.Database) -> NIOCore.EventLoopFuture<Void> {
-        database.schema("acronyms").delete()
+    func revert(on database: Database) async throws {
+        try await database.schema("acronyms").delete()
     }
 }

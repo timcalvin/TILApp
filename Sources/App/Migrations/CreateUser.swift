@@ -8,16 +8,16 @@
 import Fluent
 import Foundation
 
-struct CreateUser: Migration {
-    func prepare(on database: any FluentKit.Database) -> NIOCore.EventLoopFuture<Void> {
-        database.schema("users")
+struct CreateUser: AsyncMigration {
+    func prepare(on database: Database) async throws {
+        try await database.schema("users")
             .id()
             .field("name", .string, .required)
             .field("username", .string, .required)
             .create()
     }
     
-    func revert(on database: any FluentKit.Database) -> NIOCore.EventLoopFuture<Void> {
-        database.schema("users").delete()
+    func revert(on database: Database) async throws {
+        try await database.schema("users").delete()
     }
 }
